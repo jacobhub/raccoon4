@@ -15,3 +15,6 @@ DEADJOE
 .classpath
 .project
 .settings/
+.idea/
+gradle.properties
+out/

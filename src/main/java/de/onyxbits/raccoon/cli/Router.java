@@ -30,15 +30,15 @@ import de.onyxbits.weave.util.Version;
 /**
  * Core class of the package. Knows how to parse the command line arguments and
  * route them to the desired functions.
- * 
+ *
  * @author patrick
- * 
+ *
  */
 public class Router {
 
 	/**
 	 * Print an error message and exit
-	 * 
+	 *
 	 * @param reason
 	 *          property (minus the "fail." prefix) that contains the error
 	 *          message.
@@ -53,7 +53,7 @@ public class Router {
 
 	private static final String DESC = "description.";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Options options = new Options();
 
 		Option property = Option.builder("D").argName("property=value")
@@ -72,11 +72,17 @@ public class Router {
 				Messages.getString(DESC + "gpa-auth"));
 		options.addOption(playAuth);
 
+		Option refreshProfile = new Option(null, "refresh-profile", false,
+				Messages.getString(DESC + "refresh-profile"));
+		options.addOption(refreshProfile);
+
 		// GPA: Google Play Apps (we might add different markets later)
 		Option playAppDetails = new Option(null, "gpa-details", true,
 				Messages.getString(DESC + "gpa-details"));
 		playAppDetails.setArgName("package");
 		options.addOption(playAppDetails);
+
+
 
 		Option playAppBulkDetails = new Option(null, "gpa-bulkdetails", true,
 				Messages.getString(DESC + "gpa-bulkdetails"));
@@ -101,6 +107,8 @@ public class Router {
 		Option playUpdate = new Option(null, "gpa-update", false,
 				Messages.getString(DESC + "gpa-update"));
 		options.addOption(playUpdate);
+
+
 
 		CommandLine commandLine = null;
 		try {
@@ -135,7 +143,10 @@ public class Router {
 			Play.details(commandLine.getOptionValue(playAppDetails.getLongOpt()));
 			System.exit(0);
 		}
-
+		if (commandLine.hasOption(refreshProfile.getLongOpt())) {
+			Play.refreshProfile();
+			System.exit(0);
+		}
 		if (commandLine.hasOption(playAppBulkDetails.getLongOpt())) {
 			Play.bulkDetails(new File(commandLine.getOptionValue(playAppBulkDetails
 					.getLongOpt())));
@@ -156,6 +167,7 @@ public class Router {
 		if (commandLine.hasOption(playUpdate.getLongOpt())) {
 			Play.updateApps();
 		}
+
 
 		if (commandLine.hasOption(playAppDownload.getLongOpt())) {
 			String[] tmp = commandLine.getOptionValue(playAppDownload.getLongOpt())
